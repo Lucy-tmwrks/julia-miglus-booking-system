@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Termin buchen – Julia Miglus | K&ouml;rperarbeit. Therapie</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Noto Sans', Arial, Helvetica, sans-serif;
+      background: #f4f4f4;
+      color: #2b2b2b;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+    a { color: #15779b; }
+    a:hover { color: #11607d; }
+
+    .container { max-width: 620px; margin: 0 auto; padding: 32px 16px; }
+
+    /* ---- Header / Logo ---- */
+    .header { text-align: center; margin-bottom: 28px; }
+    .header h1 {
+      font-size: 32px;
+      font-weight: 300;
+      letter-spacing: 1px;
+      color: #2b2b2b;
+    }
+    .header .tagline {
+      font-size: 14px;
+      font-weight: 300;
+      color: #757575;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      margin-top: 2px;
+    }
+
+    /* ---- Card ---- */
+    .card {
+      background: #fff;
+      border-radius: 5px;
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+      padding: 32px;
+    }
+
+    /* ---- Progress ---- */
+    .progress { display: flex; gap: 6px; margin-bottom: 24px; }
+    .progress-step { flex: 1; height: 3px; background: #efefef; border-radius: 2px; transition: background .3s; }
+    .progress-step.active { background: #15779b; }
+
+    /* ---- Headings inside card ---- */
+    .card h2 { font-size: 20px; font-weight: 400; color: #2b2b2b; }
+
+    /* ---- Alert ---- */
+    .alert { padding: 12px 16px; border-radius: 5px; margin-bottom: 16px; font-size: 14px; display: none; }
+    .alert-error { background: #fce4e4; color: #9b1515; }
+    .alert-success { background: #e4f2f6; color: #11607d; }
+
+    /* ---- Form ---- */
+    .form-group { margin-bottom: 14px; }
+    .form-group label { display: block; font-weight: 500; margin-bottom: 3px; font-size: 13px; color: #2b2b2b; }
+    .form-group input {
+      width: 100%; padding: 10px 12px; border: 1px solid #d5d5d5; border-radius: 5px;
+      font-family: 'Noto Sans', Arial, sans-serif; font-size: 14px; color: #2b2b2b;
+      transition: border-color .2s;
+    }
+    .form-group input:focus { outline: none; border-color: #15779b; box-shadow: 0 0 0 3px rgba(21,119,155,.1); }
+    .form-group input::placeholder { color: #b0b0b0; }
+
+    /* ---- Buttons ---- */
+    .btn {
+      display: inline-block; padding: 11px 24px; border: none; border-radius: 5px;
+      font-family: 'Noto Sans', Arial, sans-serif;
+      font-size: 14px; font-weight: 500; cursor: pointer; transition: background .2s, opacity .2s;
+      letter-spacing: .3px;
+    }
+    .btn:hover { opacity: .9; }
+    .btn:disabled { opacity: .45; cursor: default; }
+    .btn-primary { background: #15779b; color: #fff; }
+    .btn-primary:hover { background: #11607d; }
+    .btn-outline { background: transparent; border: 1.5px solid #15779b; color: #15779b; }
+    .btn-outline:hover { background: rgba(21,119,155,.06); }
+    .btn-danger { background: #9b1515; color: #fff; }
+    .btn-danger:hover { background: #7d1111; }
+    .btn-block { width: 100%; }
+    .btn-soft { background: #77a9bb; color: #fff; }
+    .btn-soft:hover { background: #6899ab; }
+
+    /* ---- Views ---- */
+    .view { display: none; }
+    .view.active { display: block; }
+
+    /* ---- Calendar ---- */
+    .cal-nav { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .cal-nav strong { font-size: 15px; font-weight: 500; }
+    .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+    .cal-day-name { text-align: center; font-weight: 600; font-size: 11px; color: #757575; padding: 6px 0; text-transform: uppercase; letter-spacing: .5px; }
+    .cal-cell {
+      text-align: center; padding: 9px 0; border-radius: 5px; font-size: 14px;
+      cursor: pointer; transition: background .15s;
+    }
+    .cal-cell:hover:not(.disabled):not(.selected) { background: #e4f2f6; }
+    .cal-cell.selected { background: #15779b; color: #fff; font-weight: 600; }
+    .cal-cell.disabled { color: #c8c8c8; cursor: default; }
+    .cal-cell.empty { cursor: default; }
+
+    /* ---- Time slots ---- */
+    .slots-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 8px; }
+    .slot {
+      padding: 10px; text-align: center; border: 1px solid #d5d5d5; border-radius: 5px;
+      font-size: 14px; cursor: pointer; transition: all .15s;
+    }
+    .slot:hover:not(.taken) { border-color: #15779b; background: #e4f2f6; }
+    .slot.selected { background: #15779b; color: #fff; border-color: #15779b; }
+    .slot.taken { background: #f4f4f4; color: #b0b0b0; cursor: default; text-decoration: line-through; }
+
+    /* ---- Summary ---- */
+    .summary-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #efefef; font-size: 14px; }
+    .summary-row span:first-child { color: #757575; }
+
+    /* ---- Checkbox ---- */
+    .cb-group { display: flex; align-items: flex-start; gap: 8px; margin-bottom: 10px; }
+    .cb-group input[type="checkbox"] { width: auto; margin-top: 4px; accent-color: #15779b; }
+    .cb-group label { font-size: 13px; cursor: pointer; }
+
+    /* ---- Loading ---- */
+    .loading { text-align: center; padding: 24px; color: #757575; }
+
+    /* ---- Footer ---- */
+    .footer {
+      text-align: center; padding: 24px 16px; font-size: 12px; color: #757474;
+      line-height: 1.7; background: #fcfcfc; border-radius: 0 0 5px 5px;
+      margin-top: -1px;
+    }
+    .footer a { color: #757474; text-decoration: none; }
+    .footer a:hover { color: #15779b; }
+    .footer .sep { margin: 0 6px; }
+
+    /* ---- Responsive ---- */
+    @media (max-width: 480px) {
+      .container { padding: 16px 12px; }
+      .card { padding: 20px; }
+      .header h1 { font-size: 26px; }
+      .slots-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Header -->
+    <div class="header">
+      <h1>Julia Miglus</h1>
+      <div class="tagline">K&ouml;rperarbeit. Therapie</div>
+    </div>
+
+    <div class="card">
+      <div class="progress" id="progress">
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+        <div class="progress-step"></div>
+      </div>
+
+      <div id="alert" class="alert"></div>
+
+      <!-- =============== ENTRY =============== -->
+      <div id="view-entry" class="view active">
+        <h2 style="margin-bottom:6px;">Termin buchen</h2>
+        <p style="color:#757575; margin-bottom:20px; font-size:14px;">Willkommen! Sind Sie Neu- oder Bestandspatient?</p>
+        <div style="display:flex; gap:12px;">
+          <button class="btn btn-primary" style="flex:1;" onclick="showView('form')">Neupatient</button>
+          <button class="btn btn-outline" style="flex:1;" onclick="showView('login')">Bestandspatient</button>
+        </div>
+      </div>
+
+      <!-- =============== NEW PATIENT FORM =============== -->
+      <div id="view-form" class="view">
+        <h2 style="margin-bottom:16px;">Ihre Daten</h2>
+        <form id="patient-form" onsubmit="handleFormSubmit(event)">
+          <div class="form-group">
+            <label for="f-name">Vollst&auml;ndiger Name *</label>
+            <input type="text" id="f-name" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="f-dob">Geburtsdatum *</label>
+            <input type="date" id="f-dob" required>
+          </div>
+          <div class="form-group">
+            <label for="f-address">Adresse *</label>
+            <input type="text" id="f-address" required placeholder="Stra&szlig;e, PLZ, Stadt" autocomplete="street-address">
+          </div>
+          <div class="form-group">
+            <label for="f-email">E-Mail-Adresse *</label>
+            <input type="email" id="f-email" required autocomplete="email">
+          </div>
+          <div class="form-group">
+            <label for="f-phone">Telefonnummer</label>
+            <input type="tel" id="f-phone" placeholder="Optional" autocomplete="tel">
+          </div>
+          <div class="form-group">
+            <label for="f-pw">Passwort *</label>
+            <input type="password" id="f-pw" required minlength="12" placeholder="Mind. 12 Zeichen, Gro&szlig;-/Kleinbuchstabe, Zahl, Sonderzeichen">
+          </div>
+          <div class="form-group">
+            <label for="f-pw2">Passwort best&auml;tigen *</label>
+            <input type="password" id="f-pw2" required>
+          </div>
+          <p style="font-size:12px; color:#757575; margin-bottom:16px;">
+            Merken Sie sich Ihr Passwort &ndash; Sie ben&ouml;tigen es zum Einloggen, Stornieren oder Umbuchen.
+            Bei Verlust m&uuml;ssen Sie sich erneut als Neupatient registrieren.
+          </p>
+          <button type="submit" class="btn btn-primary btn-block">Weiter zur Terminauswahl &rarr;</button>
+        </form>
+        <p style="text-align:center; margin-top:12px; font-size:13px;">
+          <a href="#" onclick="showView('entry'); return false;">&larr; Zur&uuml;ck</a>
+        </p>
+      </div>
+
+      <!-- =============== RETURNING PATIENT LOGIN =============== -->
+      <div id="view-login" class="view">
+        <h2 style="margin-bottom:16px;">Bestandspatient Login</h2>
+        <form id="login-form" onsubmit="handleLoginSubmit(event)">
+          <div class="form-group">
+            <label for="l-name">Vollst&auml;ndiger Name</label>
+            <input type="text" id="l-name" required autocomplete="name">
+          </div>
+          <div class="form-group">
+            <label for="l-pw">Passwort</label>
+            <input type="password" id="l-pw" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Einloggen</button>
+        </form>
+        <p style="text-align:center; margin-top:12px; font-size:13px;">
+          <a href="#" onclick="showView('form'); return false;">Als Neupatient registrieren</a>
+          <span style="color:#d5d5d5;">&nbsp;|&nbsp;</span>
+          <a href="#" onclick="showView('entry'); return false;">&larr; Zur&uuml;ck</a>
+        </p>
+      </div>
+
+      <!-- =============== CALENDAR =============== -->
+      <div id="view-calendar" class="view">
+        <h2 style="margin-bottom:16px;">Datum &amp; Uhrzeit w&auml;hlen</h2>
+        <div id="calendar"></div>
+        <div id="time-slots" style="margin-top:16px;"></div>
+        <button id="btn-to-confirm" class="btn btn-primary btn-block" style="margin-top:16px; display:none;" onclick="showView('confirm')">
+          Weiter zur Best&auml;tigung &rarr;
+        </button>
+        <p style="text-align:center; margin-top:12px; font-size:13px;">
+          <a href="#" onclick="showView('form'); return false;">&larr; Zur&uuml;ck zum Formular</a>
+        </p>
+      </div>
+
+      <!-- =============== CONFIRMATION =============== -->
+      <div id="view-confirm" class="view">
+        <h2 style="margin-bottom:16px;">Buchung best&auml;tigen</h2>
+        <div id="summary"></div>
+        <div style="margin-top:20px;">
+          <div class="cb-group">
+            <input type="checkbox" id="cb-terms" onchange="updateBookBtn()">
+            <label for="cb-terms">Ich akzeptiere die <a href="https://www.julia-miglus.de/impressum/" target="_blank">AGB</a> *</label>
+          </div>
+          <div class="cb-group">
+            <input type="checkbox" id="cb-privacy" onchange="updateBookBtn()">
+            <label for="cb-privacy">Ich akzeptiere die <a href="https://www.julia-miglus.de/datenschutz/" target="_blank">Datenschutzerkl&auml;rung</a> *</label>
+          </div>
+        </div>
+        <p style="font-size:12px; color:#757575; margin:16px 0;">
+          Sie erhalten eine Best&auml;tigungs-E-Mail. Bitte klicken Sie den Link innerhalb von 15&nbsp;Minuten, um Ihre Buchung abzuschlie&szlig;en.
+        </p>
+        <button id="btn-book" class="btn btn-primary btn-block" onclick="handleBookingSubmit()" disabled>
+          Termin buchen
+        </button>
+        <p style="text-align:center; margin-top:12px; font-size:13px;">
+          <a href="#" onclick="showView('calendar'); return false;">&larr; Zur&uuml;ck zum Kalender</a>
+        </p>
+      </div>
+
+      <!-- =============== SUCCESS =============== -->
+      <div id="view-success" class="view">
+        <div style="text-align:center; padding:24px 0;">
+          <div style="font-size:40px; margin-bottom:12px; color:#15779b;">&#10003;</div>
+          <h2 style="color:#15779b;">Pr&uuml;fen Sie Ihre E-Mails!</h2>
+          <p style="margin-top:12px; font-size:14px;">
+            Wir haben eine Best&auml;tigung an <strong id="success-email"></strong> gesendet.<br>
+            Klicken Sie den Link innerhalb von <strong>15 Minuten</strong>, um Ihren Termin zu sichern.
+          </p>
+          <p style="margin-top:16px; font-size:12px; color:#757575;">
+            Keine E-Mail erhalten? Pr&uuml;fen Sie Ihren Spam-Ordner.
+          </p>
+        </div>
+      </div>
+
+      <!-- =============== CANCEL =============== -->
+      <div id="view-cancel" class="view">
+        <h2 style="margin-bottom:6px;">Termin stornieren</h2>
+        <p style="color:#757575; margin-bottom:16px; font-size:14px;">Geben Sie Ihr Passwort ein, um die Stornierung zu best&auml;tigen.</p>
+        <form id="cancel-form" onsubmit="handleCancelSubmit(event)">
+          <div class="form-group">
+            <label for="c-pw">Passwort</label>
+            <input type="password" id="c-pw" required>
+          </div>
+          <button type="submit" class="btn btn-danger btn-block">Stornierung best&auml;tigen</button>
+        </form>
+      </div>
+
+      <!-- =============== CANCEL SUCCESS =============== -->
+      <div id="view-cancel-success" class="view">
+        <div style="text-align:center; padding:24px 0;">
+          <h2>Termin storniert</h2>
+          <p style="margin-top:12px; color:#757575; font-size:14px;">Ihr Termin wurde erfolgreich storniert.</p>
+          <button class="btn btn-primary" style="margin-top:20px;" onclick="window.location.href=window.location.pathname">
+            Neuen Termin buchen
+          </button>
+        </div>
+      </div>
+
+      <!-- =============== RESCHEDULE =============== -->
+      <div id="view-reschedule" class="view">
+        <h2 style="margin-bottom:6px;">Termin umbuchen</h2>
+        <p style="color:#757575; margin-bottom:16px; font-size:14px;">Geben Sie Ihr Passwort ein, um einen neuen Termin zu w&auml;hlen.</p>
+        <form id="reschedule-form" onsubmit="handleRescheduleSubmit(event)">
+          <div class="form-group">
+            <label for="r-pw">Passwort</label>
+            <input type="password" id="r-pw" required>
+          </div>
+          <button type="submit" class="btn btn-primary btn-block">Weiter zum Kalender</button>
+        </form>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+      julia miglus<span class="sep">&middot;</span>fon <a href="tel:+491732362366">0173 236 2366</a><span class="sep">&middot;</span>mail <a href="mailto:info@julia-miglus.de">info@julia-miglus.de</a><span class="sep">&middot;</span><a href="https://www.julia-miglus.de" target="_blank">www.julia-miglus.de</a>
+      <br>
+      cornus praxis<span class="sep">&middot;</span>Gustav-Adolf-Str. 159<span class="sep">&middot;</span>13086 Berlin
+      <br style="margin-top:6px;">
+      <a href="https://www.julia-miglus.de/impressum/" target="_blank">Impressum</a><span class="sep">&middot;</span><a href="https://www.julia-miglus.de/datenschutz/" target="_blank">Datenschutz</a>
+    </div>
+  </div>
+
+<script>
+// =====================================================================
+// CONFIGURATION
+// =====================================================================
+var CONFIG = {
+  // Use /webhook-test for n8n testing, /webhook for production
+  API_BASE: 'https://n8n.srv971143.hstgr.cloud/webhook',
+  WORK_START: 9,
+  WORK_END:   17,
+  MIN_DATE: new Date('2026-05-01'),
+};
+
+// =====================================================================
+// STATE
+// =====================================================================
+var state = {
+  patient: {},
+  selectedDate: null,
+  selectedTime: null,
+  calYear: 2026,
+  calMonth: 4,
+  cachedSlots: [],
+  bookingId: null,
+  isReschedule: false,
+};
+
+// =====================================================================
+// VIEW MANAGEMENT
+// =====================================================================
+function showView(name) {
+  document.querySelectorAll('.view').forEach(function(v) { v.classList.remove('active'); });
+  var el = document.getElementById('view-' + name);
+  if (el) el.classList.add('active');
+  hideAlert();
+
+  var stepMap = { entry: 0, form: 1, login: 1, calendar: 2, confirm: 3 };
+  var step = stepMap[name] !== undefined ? stepMap[name] : -1;
+  var progEl = document.getElementById('progress');
+  if (step >= 0) {
+    progEl.style.display = 'flex';
+    document.querySelectorAll('.progress-step').forEach(function(s, i) {
+      s.classList.toggle('active', i < step);
+    });
+  } else {
+    progEl.style.display = 'none';
+  }
+
+  if (name === 'calendar') renderCalendar();
+  if (name === 'confirm') renderSummary();
+}
+
+function showAlert(msg, type) {
+  var el = document.getElementById('alert');
+  el.className = 'alert alert-' + (type || 'error');
+  el.textContent = msg;
+  el.style.display = 'block';
+  el.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function hideAlert() {
+  document.getElementById('alert').style.display = 'none';
+}
+
+// =====================================================================
+// NEW PATIENT FORM
+// =====================================================================
+function handleFormSubmit(e) {
+  e.preventDefault();
+  var pw  = document.getElementById('f-pw').value;
+  var pw2 = document.getElementById('f-pw2').value;
+
+  if (pw.length < 12)            { showAlert('Passwort muss mindestens 12 Zeichen lang sein.'); return; }
+  if (!/[A-Z]/.test(pw))         { showAlert('Passwort muss einen Gro\u00dfbuchstaben enthalten.'); return; }
+  if (!/[a-z]/.test(pw))         { showAlert('Passwort muss einen Kleinbuchstaben enthalten.'); return; }
+  if (!/[0-9]/.test(pw))         { showAlert('Passwort muss eine Zahl enthalten.'); return; }
+  if (!/[^A-Za-z0-9]/.test(pw))  { showAlert('Passwort muss ein Sonderzeichen enthalten (!@#$...).'); return; }
+  if (pw !== pw2)                 { showAlert('Passw\u00f6rter stimmen nicht \u00fcberein.'); return; }
+
+  state.patient = {
+    full_name:      document.getElementById('f-name').value.trim(),
+    date_of_birth:  document.getElementById('f-dob').value,
+    address:        document.getElementById('f-address').value.trim(),
+    email:          document.getElementById('f-email').value.trim(),
+    phone:          document.getElementById('f-phone').value.trim(),
+    password:       pw,
+  };
+
+  showView('calendar');
+}
+
+// =====================================================================
+// RETURNING PATIENT LOGIN
+// =====================================================================
+function handleLoginSubmit(e) {
+  e.preventDefault();
+  showAlert('Der Login f\u00fcr Bestandspatienten wird in K\u00fcrze verf\u00fcgbar sein. Bitte registrieren Sie sich vorerst als Neupatient.');
+}
+
+// =====================================================================
+// CALENDAR
+// =====================================================================
+function renderCalendar() {
+  var y = state.calYear, m = state.calMonth;
+  var first = new Date(y, m, 1);
+  var last  = new Date(y, m + 1, 0);
+  var startOffset = (first.getDay() + 6) % 7;
+
+  var monthLabel = first.toLocaleDateString('de', { month: 'long', year: 'numeric' });
+
+  var h = '<div class="cal-nav">';
+  h += '<button class="btn btn-outline" style="padding:4px 12px;" onclick="changeMonth(-1)">&larr;</button>';
+  h += '<strong>' + monthLabel + '</strong>';
+  h += '<button class="btn btn-outline" style="padding:4px 12px;" onclick="changeMonth(1)">&rarr;</button>';
+  h += '</div>';
+  h += '<div class="cal-grid">';
+
+  var dayNames = ['Mo','Di','Mi','Do','Fr','Sa','So'];
+  for (var i = 0; i < 7; i++) h += '<div class="cal-day-name">' + dayNames[i] + '</div>';
+
+  for (var i = 0; i < startOffset; i++) h += '<div class="cal-cell empty"></div>';
+
+  var today = new Date(); today.setHours(0,0,0,0);
+  var minBook = new Date(Math.max(CONFIG.MIN_DATE.getTime(), today.getTime() + 2 * 86400000));
+
+  for (var d = 1; d <= last.getDate(); d++) {
+    var date = new Date(y, m, d);
+    var isWeekend = date.getDay() === 0 || date.getDay() === 6;
+    var isPast = date < minBook;
+    var disabled = isWeekend || isPast;
+    var ds = formatDate(date);
+    var cls = 'cal-cell';
+    if (disabled) cls += ' disabled';
+    if (ds === state.selectedDate) cls += ' selected';
+
+    if (disabled) {
+      h += '<div class="' + cls + '">' + d + '</div>';
+    } else {
+      h += '<div class="' + cls + '" onclick="selectDate(\'' + ds + '\')">' + d + '</div>';
+    }
+  }
+  h += '</div>';
+  document.getElementById('calendar').innerHTML = h;
+}
+
+function changeMonth(delta) {
+  state.calMonth += delta;
+  if (state.calMonth > 11) { state.calMonth = 0; state.calYear++; }
+  if (state.calMonth < 0)  { state.calMonth = 11; state.calYear--; }
+  if (state.calYear < 2026 || (state.calYear === 2026 && state.calMonth < 4)) {
+    state.calYear = 2026; state.calMonth = 4;
+  }
+  renderCalendar();
+}
+
+async function selectDate(ds) {
+  state.selectedDate = ds;
+  state.selectedTime = null;
+  document.getElementById('btn-to-confirm').style.display = 'none';
+  renderCalendar();
+
+  var container = document.getElementById('time-slots');
+  container.innerHTML = '<div class="loading">Verf\u00fcgbare Zeiten werden geladen\u2026</div>';
+
+  try {
+    var res = await fetch(CONFIG.API_BASE + '/available-slots?date=' + ds);
+    if (!res.ok) throw new Error('Server error');
+    var data = await res.json();
+    state.cachedSlots = data.slots || [];
+  } catch (err) {
+    state.cachedSlots = [];
+    container.innerHTML = '<div class="alert alert-error" style="display:block;">Termine konnten nicht geladen werden. Bitte versuchen Sie es erneut.</div>';
+    return;
+  }
+  renderSlots();
+}
+
+function selectTime(time) {
+  state.selectedTime = time;
+  document.getElementById('btn-to-confirm').style.display = 'block';
+  renderSlots();
+}
+
+function renderSlots() {
+  var container = document.getElementById('time-slots');
+  if (state.cachedSlots.length === 0 && state.selectedDate) {
+    container.innerHTML = '<p style="text-align:center; color:#757575; font-size:14px;">Keine verf\u00fcgbaren Termine an diesem Tag.</p>';
+    return;
+  }
+
+  var allHours = [];
+  for (var hh = CONFIG.WORK_START; hh <= CONFIG.WORK_END; hh++) {
+    allHours.push(pad(hh) + ':00');
+  }
+
+  var h = '<p style="font-weight:500; margin-bottom:8px; font-size:14px;">Verf\u00fcgbare Zeiten:</p><div class="slots-grid">';
+  for (var i = 0; i < allHours.length; i++) {
+    var t = allHours[i];
+    var avail = state.cachedSlots.indexOf(t) !== -1;
+    var sel   = t === state.selectedTime;
+    if (avail) {
+      h += '<div class="slot' + (sel ? ' selected' : '') + '" onclick="selectTime(\'' + t + '\')">' + t + '</div>';
+    } else {
+      h += '<div class="slot taken">' + t + '</div>';
+    }
+  }
+  h += '</div>';
+  container.innerHTML = h;
+}
+
+// =====================================================================
+// CONFIRMATION
+// =====================================================================
+function renderSummary() {
+  var dt = state.selectedDate + 'T' + state.selectedTime + ':00';
+  var dateObj = new Date(dt);
+  var formatted = dateObj.toLocaleDateString('de', { weekday:'long', day:'numeric', month:'long', year:'numeric' })
+                  + ', ' + state.selectedTime + ' Uhr';
+
+  var h = '';
+  h += '<div class="summary-row"><span>Name</span><span>' + esc(state.patient.full_name) + '</span></div>';
+  h += '<div class="summary-row"><span>E-Mail</span><span>' + esc(state.patient.email) + '</span></div>';
+  h += '<div class="summary-row"><span>Termin</span><span>' + esc(formatted) + '</span></div>';
+  h += '<div class="summary-row"><span>Dauer</span><span>60 Minuten</span></div>';
+  document.getElementById('summary').innerHTML = h;
+
+  document.getElementById('cb-terms').checked = false;
+  document.getElementById('cb-privacy').checked = false;
+  document.getElementById('btn-book').disabled = true;
+}
+
+function updateBookBtn() {
+  var ok = document.getElementById('cb-terms').checked && document.getElementById('cb-privacy').checked;
+  document.getElementById('btn-book').disabled = !ok;
+}
+
+async function handleBookingSubmit() {
+  var btn = document.getElementById('btn-book');
+  btn.disabled = true;
+  btn.textContent = 'Wird gesendet\u2026';
+
+  var payload = {
+    full_name:            state.patient.full_name,
+    date_of_birth:        state.patient.date_of_birth,
+    address:              state.patient.address,
+    email:                state.patient.email,
+    phone:                state.patient.phone,
+    password:             state.patient.password,
+    appointment_datetime: state.selectedDate + 'T' + state.selectedTime + ':00',
+  };
+
+  try {
+    var res = await fetch(CONFIG.API_BASE + '/submit-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Buchung fehlgeschlagen');
+
+    document.getElementById('success-email').textContent = state.patient.email;
+    showView('success');
+  } catch (err) {
+    btn.disabled = false;
+    btn.textContent = 'Termin buchen';
+    showAlert(err.message || 'Etwas ist schiefgelaufen. Bitte versuchen Sie es erneut.');
+  }
+}
+
+// =====================================================================
+// CANCEL
+// =====================================================================
+async function handleCancelSubmit(e) {
+  e.preventDefault();
+  var pw = document.getElementById('c-pw').value;
+  var btn = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Wird storniert\u2026';
+
+  try {
+    var res = await fetch(CONFIG.API_BASE + '/manage-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ booking_id: state.bookingId, password: pw, action: 'cancel' }),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Stornierung fehlgeschlagen');
+    showView('cancel-success');
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Stornierung best\u00e4tigen';
+    showAlert(err.message);
+  }
+}
+
+// =====================================================================
+// RESCHEDULE
+// =====================================================================
+async function handleRescheduleSubmit(e) {
+  e.preventDefault();
+  var pw = document.getElementById('r-pw').value;
+  var btn = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Wird \u00fcberpr\u00fcft\u2026';
+
+  try {
+    var res = await fetch(CONFIG.API_BASE + '/manage-booking', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ booking_id: state.bookingId, password: pw, action: 'reschedule' }),
+    });
+    var data = await res.json();
+    if (!res.ok) throw new Error(data.error || '\u00dcberpr\u00fcfung fehlgeschlagen');
+
+    if (data.patient) {
+      state.patient = data.patient;
+      state.patient.password = pw;
+    }
+    state.isReschedule = true;
+    showView('calendar');
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Weiter zum Kalender';
+    showAlert(err.message);
+  }
+}
+
+// =====================================================================
+// HELPERS
+// =====================================================================
+function formatDate(d) {
+  return d.getFullYear() + '-' + pad(d.getMonth() + 1) + '-' + pad(d.getDate());
+}
+function pad(n) { return n < 10 ? '0' + n : '' + n; }
+function esc(s) {
+  var d = document.createElement('div'); d.textContent = s; return d.innerHTML;
+}
+
+// =====================================================================
+// INIT
+// =====================================================================
+(function init() {
+  var params = new URLSearchParams(window.location.search);
+  var action = params.get('action');
+  state.bookingId = params.get('booking_id');
+
+  if (action === 'cancel' && state.bookingId) {
+    showView('cancel');
+  } else if (action === 'reschedule' && state.bookingId) {
+    showView('reschedule');
+  } else {
+    showView('entry');
+  }
+})();
+</script>
+</body>
+</html>
