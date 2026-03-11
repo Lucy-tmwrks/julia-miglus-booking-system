@@ -291,6 +291,27 @@
         </div>
       </div>
 
+      <!-- =============== CONFIRMED =============== -->
+      <div id="view-confirmed" class="view">
+        <div style="text-align:center; padding:24px 0;">
+          <div style="font-size:48px; margin-bottom:12px; color:#15779b;">&#10003;</div>
+          <h2 style="color:#15779b;">Termin best&auml;tigt!</h2>
+          <p style="margin-top:12px; font-size:14px;">
+            Ihr Termin wurde <strong>erfolgreich best&auml;tigt</strong> und in unseren Kalender eingetragen.
+          </p>
+          <p style="margin-top:12px; font-size:14px; color:#757575;">
+            Sie erhalten in K&uuml;rze eine Best&auml;tigungs-E-Mail mit allen Details<br>
+            sowie Links zum Stornieren oder Umbuchen.
+          </p>
+          <p style="margin-top:16px; font-size:13px; color:#757575;">
+            5 Tage vor dem Termin erhalten Sie eine Erinnerung.
+          </p>
+          <button class="btn btn-primary" style="margin-top:24px;" onclick="window.location.href=window.location.pathname">
+            Zur Startseite
+          </button>
+        </div>
+      </div>
+
       <!-- =============== CANCEL =============== -->
       <div id="view-cancel" class="view">
         <h2 style="margin-bottom:6px;">Termin stornieren</h2>
@@ -686,7 +707,9 @@ function esc(s) {
   var action = params.get('action');
   state.bookingId = params.get('booking_id');
 
-  if (action === 'cancel' && state.bookingId) {
+  if (params.get('confirmed') === 'true') {
+    showView('confirmed');
+  } else if (action === 'cancel' && state.bookingId) {
     showView('cancel');
   } else if (action === 'reschedule' && state.bookingId) {
     showView('reschedule');
