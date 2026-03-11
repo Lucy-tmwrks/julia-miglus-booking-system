@@ -595,8 +595,10 @@ async function handleBookingSubmit() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
-    var data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Buchung fehlgeschlagen');
+    var text = await res.text();
+    var data = {};
+    try { data = JSON.parse(text); } catch(e) {}
+    if (!res.ok) throw new Error(data.error || 'Buchung fehlgeschlagen (Status ' + res.status + ')');
 
     document.getElementById('success-email').textContent = state.patient.email;
     showView('success');
@@ -622,8 +624,10 @@ async function handleCancelSubmit(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ booking_id: state.bookingId, password: pw, action: 'cancel' }),
     });
-    var data = await res.json();
-    if (!res.ok) throw new Error(data.error || 'Stornierung fehlgeschlagen');
+    var text = await res.text();
+    var data = {};
+    try { data = JSON.parse(text); } catch(e) {}
+    if (!res.ok) throw new Error(data.error || 'Stornierung fehlgeschlagen (Status ' + res.status + ')');
     showView('cancel-success');
   } catch (err) {
     btn.disabled = false; btn.textContent = 'Stornierung best\u00e4tigen';
@@ -646,8 +650,10 @@ async function handleRescheduleSubmit(e) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ booking_id: state.bookingId, password: pw, action: 'reschedule' }),
     });
-    var data = await res.json();
-    if (!res.ok) throw new Error(data.error || '\u00dcberpr\u00fcfung fehlgeschlagen');
+    var text = await res.text();
+    var data = {};
+    try { data = JSON.parse(text); } catch(e) {}
+    if (!res.ok) throw new Error(data.error || '\u00dcberpr\u00fcfung fehlgeschlagen (Status ' + res.status + ')');
 
     if (data.patient) {
       state.patient = data.patient;
