@@ -707,8 +707,11 @@ function esc(s) {
   var action = params.get('action');
   state.bookingId = params.get('booking_id');
 
-  if (params.get('confirmed') === 'true') {
+  var confirmUrl = params.get('confirm');
+  if (confirmUrl) {
     showView('confirmed');
+    // Trigger n8n Wait node in the background to resume the workflow
+    fetch(confirmUrl, { mode: 'no-cors' }).catch(function(){});
   } else if (action === 'cancel' && state.bookingId) {
     showView('cancel');
   } else if (action === 'reschedule' && state.bookingId) {
