@@ -453,9 +453,32 @@ function handleFormSubmit(e) {
 // =====================================================================
 // RETURNING PATIENT LOGIN
 // =====================================================================
-function handleLoginSubmit(e) {
+async function handleLoginSubmit(e) {
   e.preventDefault();
-  showAlert('Der Login f\u00fcr Bestandspatienten wird in K\u00fcrze verf\u00fcgbar sein. Bitte registrieren Sie sich vorerst als Neupatient.');
+  var name = document.getElementById('l-name').value.trim();
+  var pw   = document.getElementById('l-pw').value;
+  var btn  = e.target.querySelector('button');
+  btn.disabled = true; btn.textContent = 'Wird \u00fcberpr\u00fcft\u2026';
+
+  try {
+    var res = await fetch(CONFIG.API_BASE + '/login-patient', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ full_name: name, password: pw }),
+    });
+    var text = await res.text();
+    var data = {};
+    try { data = JSON.parse(text); } catch(e) {}
+    if (!res.ok) throw new Error(data.error || 'Login fehlgeschlagen (Status ' + res.status + ')');
+
+    state.patient = data.patient || {};
+    state.patient.password = pw;
+    state.isReschedule = false;
+    showView('calendar');
+  } catch (err) {
+    btn.disabled = false; btn.textContent = 'Einloggen';
+    showAlert(err.message || 'Login fehlgeschlagen. Bitte \u00fcberpr\u00fcfen Sie Ihre Eingaben.');
+  }
 }
 
 // =====================================================================
