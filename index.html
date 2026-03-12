@@ -20,27 +20,53 @@
 
     .container { max-width: 620px; margin: 0 auto; padding: 32px 16px; }
 
-    /* ---- Header / Logo ---- */
-    .header { text-align: center; margin-bottom: 28px; }
-    .header h1 {
-      font-size: 32px;
-      font-weight: 300;
-      letter-spacing: 1px;
-      color: #2b2b2b;
+    /* ---- Banner Header ---- */
+    .banner {
+      max-width: 620px;
+      margin: 0 auto 28px auto;
+      border-radius: 8px 8px 0 0;
+      background: linear-gradient(135deg, #f8fafa 0%, #eaf4f7 40%, #d8eef4 100%);
+      box-shadow: 0 1px 6px rgba(0,0,0,.07);
+      padding: 28px 32px;
+      display: flex;
+      align-items: center;
+      gap: 24px;
     }
-    .header .tagline {
-      font-size: 14px;
-      font-weight: 300;
+    .banner-logo {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(21,119,155,.15);
+    }
+    .banner-text h1 {
+      font-size: 28px;
+      font-weight: 600;
+      letter-spacing: .5px;
+      color: #15779b;
+      line-height: 1.2;
+    }
+    .banner-text .tagline {
+      font-size: 13px;
+      font-weight: 400;
       color: #757575;
       letter-spacing: 2px;
       text-transform: uppercase;
-      margin-top: 2px;
+      margin-top: 4px;
+    }
+    .banner-accent {
+      display: block;
+      width: 40px;
+      height: 3px;
+      background: #15779b;
+      border-radius: 2px;
+      margin-top: 10px;
     }
 
     /* ---- Card ---- */
     .card {
       background: #fff;
-      border-radius: 5px;
+      border-radius: 0 0 8px 8px;
       box-shadow: 0 1px 6px rgba(0,0,0,.07);
       padding: 32px;
     }
@@ -131,8 +157,7 @@
     /* ---- Footer ---- */
     .footer {
       text-align: center; padding: 24px 16px; font-size: 12px; color: #757474;
-      line-height: 1.7; background: #fcfcfc; border-radius: 0 0 5px 5px;
-      margin-top: -1px;
+      line-height: 1.7; margin-top: 16px;
     }
     .footer a { color: #757474; text-decoration: none; }
     .footer a:hover { color: #15779b; }
@@ -141,22 +166,28 @@
     /* ---- Responsive ---- */
     @media (max-width: 480px) {
       .container { padding: 16px 12px; }
+      .banner { padding: 20px; gap: 16px; }
+      .banner-logo { width: 56px; height: 56px; }
+      .banner-text h1 { font-size: 22px; }
+      .banner-text .tagline { font-size: 11px; }
       .card { padding: 20px; }
-      .header h1 { font-size: 26px; }
       .slots-grid { grid-template-columns: repeat(2, 1fr); }
     }
   </style>
 </head>
 <body>
   <div class="container">
-    <!-- Header -->
-    <div class="header">
-      <img src="logo.jpg" alt="Julia Miglus" style="width:70px;height:70px;border-radius:50%;margin-bottom:12px;">
-      <h1>Julia Miglus</h1>
-      <div class="tagline">K&ouml;rperarbeit. Therapie</div>
+    <!-- Banner Header -->
+    <div class="banner">
+      <img src="logo.jpg" alt="Julia Miglus" class="banner-logo">
+      <div class="banner-text">
+        <h1>Julia Miglus</h1>
+        <div class="tagline">K&ouml;rperarbeit. Therapie</div>
+        <span class="banner-accent"></span>
+      </div>
     </div>
 
-    <div class="card">
+    <div class="card" style="margin-top:-28px;">
       <div class="progress" id="progress">
         <div class="progress-step"></div>
         <div class="progress-step"></div>
