@@ -41,9 +41,9 @@
     }
     .banner-text h1 {
       font-size: 28px;
-      font-weight: 600;
+      font-weight: 300;
       letter-spacing: .5px;
-      color: #15779b;
+      color: #2b2b2b;
       line-height: 1.2;
     }
     .banner-text .tagline {
@@ -183,7 +183,7 @@
       <div class="banner-text">
         <h1>Julia Miglus</h1>
         <div class="tagline">K&ouml;rperarbeit. Therapie</div>
-        <span class="banner-accent"></span>
+        <!-- accent line removed -->
       </div>
     </div>
 
@@ -210,9 +210,15 @@
       <div id="view-form" class="view">
         <h2 style="margin-bottom:16px;">Ihre Daten</h2>
         <form id="patient-form" onsubmit="handleFormSubmit(event)">
-          <div class="form-group">
-            <label for="f-name">Vollst&auml;ndiger Name *</label>
-            <input type="text" id="f-name" required autocomplete="name">
+          <div style="display:flex; gap:12px;">
+            <div class="form-group" style="flex:1;">
+              <label for="f-vorname">Vorname *</label>
+              <input type="text" id="f-vorname" required autocomplete="given-name">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="f-nachname">Nachname *</label>
+              <input type="text" id="f-nachname" required autocomplete="family-name">
+            </div>
           </div>
           <div class="form-group">
             <label for="f-dob">Geburtsdatum *</label>
@@ -471,7 +477,7 @@ function handleFormSubmit(e) {
   if (pw !== pw2)                 { showAlert('Passw\u00f6rter stimmen nicht \u00fcberein.'); return; }
 
   state.patient = {
-    full_name:      document.getElementById('f-name').value.trim(),
+    full_name:      document.getElementById('f-vorname').value.trim() + ' ' + document.getElementById('f-nachname').value.trim(),
     date_of_birth:  document.getElementById('f-dob').value,
     address:        document.getElementById('f-address').value.trim(),
     email:          document.getElementById('f-email').value.trim(),
