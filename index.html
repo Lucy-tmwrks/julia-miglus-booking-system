@@ -610,21 +610,11 @@ function renderSlots() {
     return;
   }
 
-  var allHours = [];
-  for (var hh = CONFIG.WORK_START; hh <= CONFIG.WORK_END; hh++) {
-    allHours.push(pad(hh) + ':00');
-  }
-
   var h = '<p style="font-weight:500; margin-bottom:8px; font-size:14px;">Verf\u00fcgbare Zeiten:</p><div class="slots-grid">';
-  for (var i = 0; i < allHours.length; i++) {
-    var t = allHours[i];
-    var avail = state.cachedSlots.indexOf(t) !== -1;
-    var sel   = t === state.selectedTime;
-    if (avail) {
-      h += '<div class="slot' + (sel ? ' selected' : '') + '" onclick="selectTime(\'' + t + '\')">' + t + '</div>';
-    } else {
-      h += '<div class="slot taken">' + t + '</div>';
-    }
+  for (var i = 0; i < state.cachedSlots.length; i++) {
+    var t = state.cachedSlots[i];
+    var sel = t === state.selectedTime;
+    h += '<div class="slot' + (sel ? ' selected' : '') + '" onclick="selectTime(\'' + t + '\')">' + t + '</div>';
   }
   h += '</div>';
   container.innerHTML = h;
