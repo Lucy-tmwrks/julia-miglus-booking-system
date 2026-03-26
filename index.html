@@ -224,9 +224,25 @@
             <label for="f-dob">Geburtsdatum *</label>
             <input type="date" id="f-dob" required>
           </div>
-          <div class="form-group">
-            <label for="f-address">Adresse *</label>
-            <input type="text" id="f-address" required placeholder="Stra&szlig;e, PLZ, Stadt" autocomplete="street-address">
+          <div style="display:flex; gap:12px;">
+            <div class="form-group" style="flex:3;">
+              <label for="f-street">Stra&szlig;e *</label>
+              <input type="text" id="f-street" required placeholder="Stra&szlig;enname" autocomplete="street-address">
+            </div>
+            <div class="form-group" style="flex:1;">
+              <label for="f-hausnr">Nr. *</label>
+              <input type="text" id="f-hausnr" required placeholder="z.B. 12a">
+            </div>
+          </div>
+          <div style="display:flex; gap:12px;">
+            <div class="form-group" style="flex:1;">
+              <label for="f-plz">PLZ *</label>
+              <input type="text" id="f-plz" required placeholder="z.B. 13086" autocomplete="postal-code" maxlength="5" pattern="[0-9]{5}">
+            </div>
+            <div class="form-group" style="flex:2;">
+              <label for="f-stadt">Stadt *</label>
+              <input type="text" id="f-stadt" required placeholder="z.B. Berlin" autocomplete="address-level2">
+            </div>
           </div>
           <div class="form-group">
             <label for="f-email">E-Mail-Adresse *</label>
@@ -300,7 +316,7 @@
           </div>
           <div class="cb-group">
             <input type="checkbox" id="cb-privacy" onchange="updateBookBtn()">
-            <label for="cb-privacy">Ich akzeptiere die <a href="https://www.julia-miglus.de/datenschutz/" target="_blank">Datenschutzerkl&auml;rung</a> *</label>
+            <label for="cb-privacy">Ich akzeptiere die <a href="datenschutz.html" target="_blank">Datenschutzerkl&auml;rung</a> *</label>
           </div>
         </div>
         <p style="font-size:12px; color:#757575; margin:16px 0;">
@@ -394,7 +410,7 @@
       <br>
       cornus praxis<span class="sep">&middot;</span>Gustav-Adolf-Str. 159<span class="sep">&middot;</span>13086 Berlin
       <br style="margin-top:6px;">
-      <a href="https://www.julia-miglus.de/impressum/" target="_blank">Impressum</a><span class="sep">&middot;</span><a href="https://www.julia-miglus.de/datenschutz/" target="_blank">Datenschutz</a>
+      <a href="https://www.julia-miglus.de/impressum/" target="_blank">Impressum</a><span class="sep">&middot;</span><a href="datenschutz.html" target="_blank">Datenschutz</a>
     </div>
   </div>
 
@@ -477,7 +493,7 @@ function handleFormSubmit(e) {
   state.patient = {
     full_name:      document.getElementById('f-vorname').value.trim() + ' ' + document.getElementById('f-nachname').value.trim(),
     date_of_birth:  document.getElementById('f-dob').value,
-    address:        document.getElementById('f-address').value.trim(),
+    address:        document.getElementById('f-street').value.trim() + ' ' + document.getElementById('f-hausnr').value.trim() + ', ' + document.getElementById('f-plz').value.trim() + ' ' + document.getElementById('f-stadt').value.trim(),
     email:          document.getElementById('f-email').value.trim(),
     phone:          document.getElementById('f-phone').value.trim(),
     password:       pw,
@@ -632,6 +648,12 @@ function renderSummary() {
   h += '<div class="summary-row"><span>E-Mail</span><span>' + esc(state.patient.email) + '</span></div>';
   h += '<div class="summary-row"><span>Termin</span><span>' + esc(formatted) + '</span></div>';
   h += '<div class="summary-row"><span>Dauer</span><span>60 Minuten</span></div>';
+  h += '<div class="summary-row"><span>Preis</span><span>60 &euro;</span></div>';
+  h += '<p style="font-size:12px; color:#757575; margin-top:12px; line-height:1.6;">';
+  h += 'Behandlungskosten k\u00f6nnen durch private Krankenversicherungen oder durch eine Heilpraktiker-Zusatzversicherung \u00fcbernommen werden. ';
+  h += 'Viele Krankenkassen bezuschussen die Osteopathie \u2013 bitte informieren Sie sich.<br>';
+  h += 'Sozialhonorar nach Absprache m\u00f6glich.';
+  h += '</p>';
   document.getElementById('summary').innerHTML = h;
 
   document.getElementById('cb-terms').checked = false;
