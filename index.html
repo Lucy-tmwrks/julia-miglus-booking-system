@@ -460,7 +460,18 @@ var CONFIG = {
   // Use /webhook-test for n8n testing, /webhook for production
   API_BASE: 'https://n8n.srv971143.hstgr.cloud/webhook',
   MIN_DATE: new Date('2026-05-01'),
+  price: '90',
 };
+
+// Load dynamic settings from n8n (price etc.)
+(function loadSettings() {
+  fetch(CONFIG.API_BASE + '/get-settings')
+    .then(function(r) { return r.json(); })
+    .then(function(d) {
+      if (d.price) CONFIG.price = d.price;
+    })
+    .catch(function() { /* keep defaults */ });
+})();
 
 // =====================================================================
 // STATE
@@ -686,7 +697,7 @@ function renderSummary() {
   h += '<div class="summary-row"><span>E-Mail</span><span>' + esc(state.patient.email) + '</span></div>';
   h += '<div class="summary-row"><span>Termin</span><span>' + esc(formatted) + '</span></div>';
   h += '<div class="summary-row"><span>Dauer</span><span>60 Minuten</span></div>';
-  h += '<div class="summary-row"><span>Preis</span><span>90 &euro;</span></div>';
+  h += '<div class="summary-row"><span>Preis</span><span>' + esc(CONFIG.price) + ' \u20ac</span></div>';
   h += '<p style="font-size:12px; color:#757575; margin-top:12px; line-height:1.6;">';
   h += 'Behandlungskosten k\u00f6nnen durch private Krankenversicherungen oder durch eine Heilpraktiker-Zusatzversicherung \u00fcbernommen werden. ';
   h += 'Viele Krankenkassen bezuschussen die Osteopathie \u2013 bitte informieren Sie sich.<br>';
