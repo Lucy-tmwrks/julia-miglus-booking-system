@@ -95,6 +95,17 @@
     .form-group input:focus { outline: none; border-color: #2589A6; box-shadow: 0 0 0 3px rgba(75,168,200,.15); }
     .form-group input::placeholder { color: #b0b0b0; }
 
+    /* ---- Password toggle ---- */
+    .pw-wrapper { position: relative; }
+    .pw-wrapper input { padding-right: 42px; }
+    .pw-toggle {
+      position: absolute; right: 10px; top: 50%; transform: translateY(-50%);
+      background: none; border: none; cursor: pointer; padding: 4px;
+      color: #999; font-size: 16px; line-height: 1;
+    }
+    .pw-toggle:hover { color: #2589A6; }
+    .pw-toggle svg { width: 20px; height: 20px; display: block; }
+
     /* ---- Buttons ---- */
     .btn {
       display: inline-block; padding: 11px 24px; border: none; border-radius: 5px;
@@ -254,11 +265,17 @@
           </div>
           <div class="form-group">
             <label for="f-pw">Passwort *</label>
-            <input type="password" id="f-pw" required minlength="12" placeholder="Mind. 12 Zeichen, Gro&szlig;-/Kleinbuchstabe, Zahl, Sonderzeichen">
+            <div class="pw-wrapper">
+              <input type="password" id="f-pw" required minlength="12" placeholder="Mind. 12 Zeichen, Gro&szlig;-/Kleinbuchstabe, Zahl, Sonderzeichen">
+              <button type="button" class="pw-toggle" onclick="togglePw(this)" aria-label="Passwort anzeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
           </div>
           <div class="form-group">
             <label for="f-pw2">Passwort best&auml;tigen *</label>
-            <input type="password" id="f-pw2" required>
+            <div class="pw-wrapper">
+              <input type="password" id="f-pw2" required>
+              <button type="button" class="pw-toggle" onclick="togglePw(this)" aria-label="Passwort anzeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
           </div>
           <p style="font-size:12px; color:#757575; margin-bottom:16px;">
             Merken Sie sich Ihr Passwort &ndash; Sie ben&ouml;tigen es zum Einloggen, Stornieren oder Umbuchen.
@@ -281,7 +298,10 @@
           </div>
           <div class="form-group">
             <label for="l-pw">Passwort</label>
-            <input type="password" id="l-pw" required>
+            <div class="pw-wrapper">
+              <input type="password" id="l-pw" required>
+              <button type="button" class="pw-toggle" onclick="togglePw(this)" aria-label="Passwort anzeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary btn-block">Einloggen</button>
         </form>
@@ -373,7 +393,10 @@
         <form id="cancel-form" onsubmit="handleCancelSubmit(event)">
           <div class="form-group">
             <label for="c-pw">Passwort</label>
-            <input type="password" id="c-pw" required>
+            <div class="pw-wrapper">
+              <input type="password" id="c-pw" required>
+              <button type="button" class="pw-toggle" onclick="togglePw(this)" aria-label="Passwort anzeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
           </div>
           <button type="submit" class="btn btn-danger btn-block">Stornierung best&auml;tigen</button>
         </form>
@@ -397,7 +420,10 @@
         <form id="reschedule-form" onsubmit="handleRescheduleSubmit(event)">
           <div class="form-group">
             <label for="r-pw">Passwort</label>
-            <input type="password" id="r-pw" required>
+            <div class="pw-wrapper">
+              <input type="password" id="r-pw" required>
+              <button type="button" class="pw-toggle" onclick="togglePw(this)" aria-label="Passwort anzeigen"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg></button>
+            </div>
           </div>
           <button type="submit" class="btn btn-primary btn-block">Weiter zum Kalender</button>
         </form>
@@ -415,6 +441,18 @@
   </div>
 
 <script>
+// =====================================================================
+// PASSWORD TOGGLE
+// =====================================================================
+function togglePw(btn) {
+  var input = btn.parentElement.querySelector('input');
+  var show = input.type === 'password';
+  input.type = show ? 'text' : 'password';
+  btn.innerHTML = show
+    ? '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94"/><path d="M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19"/><path d="M14.12 14.12a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>'
+    : '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>';
+}
+
 // =====================================================================
 // CONFIGURATION
 // =====================================================================
